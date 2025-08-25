@@ -14,11 +14,11 @@ always @(posedge clk) begin
     end else begin
         PC <= PC_NEXT;
     end
+
+    $display("PC: %d, PC_NEXT: %d", PC, PC_NEXT);
 end
 
-always @(*) begin
-    $display("Time = %0t, PC: %d, PC_NEXT: %d", $time, $signed(PC), $signed(PC_NEXT));
-end
+
 
 // assign PC = (rst) ? 64'd0 : PC_NEXT;
 

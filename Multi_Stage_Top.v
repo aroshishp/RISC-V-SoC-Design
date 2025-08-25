@@ -27,7 +27,7 @@ wire [63:0] PC_CURR;
 Mux PC_Update_Mux(
     .a(PC_NEXT_REG),
     .b(EX_MEM_PC_NEXT_IMM),
-    .s((EX_MEM_Branch & EX_MEM_zero) || EX_MEM_OPCODE == 7'b1101111),
+    .s(Flush),
     .c(PC_NEXT)
 );
 
@@ -60,7 +60,7 @@ reg [31:0] IF_ID_INSTRUCTION_BUS;
 reg [63:0] IF_ID_PC_CURR; 
 
 always@(posedge clk) begin
-    if (rst) begin
+    if (rst || Flush) begin
         IF_ID_INSTRUCTION_BUS <= 32'b0;
         IF_ID_PC_CURR <= 64'b0;
     end else begin
@@ -151,7 +151,7 @@ reg ID_EX_Branch;
 
 
 always@(posedge clk) begin
-    if (rst) begin
+    if (rst || Flush) begin
         ID_EX_INSTRUCTION_OPCODE <= 7'b0;
         ID_EX_INSTRUCTION_11_7 <= 5'b0;
         ID_EX_INSTRUCTION_30_14_12 <= 4'b0;
@@ -185,7 +185,7 @@ always@(posedge clk) begin
         ID_EX_IMM_OUT <= IMM_OUT;
         ID_EX_READ_DATA2 <= READ_DATA2;
         ID_EX_READ_DATA1 <= READ_DATA1;
-        ID_EX_PC_CURR <= PC_CURR;
+        ID_EX_PC_CURR <= IF_ID_PC_CURR;
         ID_EX_RegWrite <= RegWrite;
         ID_EX_ALUSrc <= ALUSrc;
         ID_EX_MemWrite <= MemWrite;
@@ -312,6 +312,7 @@ always@(posedge clk) begin
         EX_MEM_MemtoReg <= ID_EX_MemtoReg;
         EX_MEM_MemRead <= ID_EX_MemRead;
         EX_MEM_Branch <= ID_EX_Branch;
+
     end
 end
 
@@ -331,6 +332,10 @@ data_memory data_memory(
     .rst(rst),
     .ReadData(DMEM_READ_DATA)
 );
+
+wire Flush;
+
+assign Flush = (EX_MEM_Branch & EX_MEM_zero) || EX_MEM_OPCODE == 7'b1101111;
 
 
 // MEM/WB Register
