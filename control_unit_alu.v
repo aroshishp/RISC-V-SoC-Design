@@ -19,9 +19,9 @@ sra:           3'b101
 sll:           3'b110
 srl:           3'b111
 */
-always@(*) begin
-    $display("Time: %0t | ALUOp: %b | funct: %b | ALUControl: %b", $time, ALUOp, funct, ALUControl);
-end
+// always@(*) begin
+//     $display("Time: %0t | ALUOp: %b | funct: %b | ALUControl: %b", $time, ALUOp, funct, ALUControl);
+// end
 
 always @(*) begin
     // Default values

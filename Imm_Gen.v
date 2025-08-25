@@ -7,5 +7,8 @@ module Imm_Gen(
                      (imm_src == 2'b01) ? {{52{imm_in[31]}}, imm_in[31:25], imm_in[11:7]} : // S
                      (imm_src == 2'b10) ? {{51{imm_in[31]}}, imm_in[31], imm_in[7], imm_in[30:25], imm_in[11:8], 1'b0} : // B
                      (imm_src == 2'b11) ? {{43{imm_in[31]}}, imm_in[31],imm_in[19:12],imm_in[20] ,imm_in[30:21], 1'b0} : 64'b0; // J
-                     
+
+    // always@(*) begin
+    //     $display("Time: %0t, imm_in: %h, imm_src: %b, imm_out: %d", $time, imm_in, imm_src, $signed(imm_out));
+    // end
 endmodule

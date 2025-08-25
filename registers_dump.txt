@@ -1,15 +1,15 @@
-Register file dump at time 1500:
+Register file dump at time 1700:
 x0: xxxxxxxxxxxxxxxx
 x1: xxxxxxxxxxxxxxxx
 x2: xxxxxxxxxxxxxxxx
-x3: 0000000000000003
-x4: 0000000000000004
-x5: 0000000000000007
-x6: 0000000000000009
-x7: 0000000000000002
-x8: 000000000000000b
-x9: 0000000000000016
-x10: 000000000000000a
+x3: xxxxxxxxxxxxxxxx
+x4: xxxxxxxxxxxxxxxx
+x5: xxxxxxxxxxxxxxxx
+x6: xxxxxxxxxxxxxxxx
+x7: xxxxxxxxxxxxxxxx
+x8: xxxxxxxxxxxxxxxx
+x9: xxxxxxxxxxxxxxxx
+x10: xxxxxxxxxxxxxxxx
 x11: xxxxxxxxxxxxxxxx
 x12: xxxxxxxxxxxxxxxx
 x13: xxxxxxxxxxxxxxxx

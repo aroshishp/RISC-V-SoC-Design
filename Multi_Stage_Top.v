@@ -27,7 +27,7 @@ wire [63:0] PC_CURR;
 Mux PC_Update_Mux(
     .a(PC_NEXT_REG),
     .b(EX_MEM_PC_NEXT_IMM),
-    .s(EX_MEM_Branch & EX_MEM_zero),
+    .s((EX_MEM_Branch & EX_MEM_zero) || EX_MEM_OPCODE == 7'b1101111),
     .c(PC_NEXT)
 );
 
@@ -275,6 +275,7 @@ PC_Adder PC_Adder_Imm(
     .c(PC_NEXT_IMM)
 );
 
+reg [6:0] EX_MEM_OPCODE;
 reg [4:0] EX_MEM_INSTRUCTION_11_7;
 reg [63:0] EX_MEM_READ_DATA_2;
 reg [63:0] EX_MEM_ALU_OUT;
@@ -288,6 +289,7 @@ reg EX_MEM_Branch;
 
 always@(posedge clk) begin
     if (rst) begin
+        EX_MEM_OPCODE <= 7'b0;
         EX_MEM_INSTRUCTION_11_7 <= 5'b0;
         EX_MEM_READ_DATA_2 <= 64'b0;
         EX_MEM_ALU_OUT <= 64'b0;
@@ -299,6 +301,7 @@ always@(posedge clk) begin
         EX_MEM_MemRead <= 1'b0;
         EX_MEM_Branch <= 1'b0;
     end else begin
+        EX_MEM_OPCODE <= ID_EX_INSTRUCTION_OPCODE;
         EX_MEM_INSTRUCTION_11_7 <= ID_EX_INSTRUCTION_11_7;
         EX_MEM_READ_DATA_2 <= ID_EX_READ_DATA2;
         EX_MEM_ALU_OUT <= ALU_OUT;

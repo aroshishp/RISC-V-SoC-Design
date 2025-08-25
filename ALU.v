@@ -45,10 +45,10 @@ module ALU (
         //          ALU_Sel, A, B, ALU_Out, Carry_out, zero);
     end
 
-    always@(*) begin
-        $display("Time = %0t | ALU Operation: %b | A: %h | B: %h | ALU_Out: %h",
-                 $time, ALU_Sel, A, B, ALU_Out);
-    end
+    // always@(*) begin
+    //     $display("Time = %0t | ALU Operation: %b | A: %h | B: %h | ALU_Out: %h",
+    //              $time, ALU_Sel, A, B, ALU_Out);
+    // end
 
     // initial begin
     //     $monitor("Time: %0t | A: %h | B: %h | ALU_Sel: %b | ALU_Out: %h | Carry_out: %b | zero: %b", 

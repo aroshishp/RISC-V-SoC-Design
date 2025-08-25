@@ -43,12 +43,12 @@ always @(*) begin
     end
 end
 
-initial begin
-    registers[3] = 64'd3; // x3 is initialized to 3
-    registers[4] = 64'd4; // x4 is initialized to 4
-    registers[6] = 64'd9;
-    registers[7] = 64'd2;
-    registers[10] = 64'd10;
-    // $monitor("Time: %0t | ReadData1: %h | ReadData2: %h | WriteData: %h", $time, ReadData1, ReadData2, WriteData);
-end
+// initial begin
+//     registers[3] = 64'd3; // x3 is initialized to 3
+//     registers[4] = 64'd4; // x4 is initialized to 4
+//     registers[6] = 64'd9;
+//     registers[7] = 64'd2;
+//     registers[10] = 64'd10;
+//     // $monitor("Time: %0t | ReadData1: %h | ReadData2: %h | WriteData: %h", $time, ReadData1, ReadData2, WriteData);
+// end
 endmodule
