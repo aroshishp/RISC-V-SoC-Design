@@ -9,6 +9,6 @@ module Imm_Gen(
                      (imm_src == 2'b11) ? {{43{imm_in[31]}}, imm_in[31],imm_in[19:12],imm_in[20] ,imm_in[30:21], 1'b0} : 64'b0; // J
 
     // always@(*) begin
-    //     $display("Time: %0t, imm_in: %h, imm_src: %b, imm_out: %d", $time, imm_in, imm_src, $signed(imm_out));
+    //     $display("time = %t, imm_in = %h, imm_src = %b, imm_out = %h", $time, imm_in, imm_src, imm_out);
     // end
 endmodule
