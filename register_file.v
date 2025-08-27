@@ -50,11 +50,20 @@ end
 initial begin
     // registers[3] = 64'd3; // x3 is initialized to 3
     // registers[4] = 64'd4; // x4 is initialized to 4
-    // registers[6] = 64'd9;
+    // registers[6] = 64'd6;
     // registers[7] = 64'd2;
     // registers[7] = 64'd8;
     // registers[13] = 64'd6;
-    // registers[12] = 64'd5;  
+    // registers[12] = 64'd5;
+
+
+    registers[10] = 64'd0;  
+    registers[11] = 64'd5;
+
+    registers[28] = 64'd1;
+    registers[29] = 64'd0;
+    registers[30] = 64'd0;
+    registers[31] = 64'd0;  
 
     // registers[6] = 64'd12;
     // registers[5] = 64'd3;

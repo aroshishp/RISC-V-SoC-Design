@@ -338,7 +338,11 @@ data_memory data_memory(
 
 wire Flush;
 
-assign Flush = (EX_MEM_Branch & ((EX_MEM_zero & (EX_MEM_INSTRUCTION_30_14_12[2:0] == 3'b000))|| EX_MEM_ALU_OUT[63])) || EX_MEM_OPCODE == 7'b1101111;
+assign Flush = (EX_MEM_Branch & ((EX_MEM_zero & (EX_MEM_INSTRUCTION_30_14_12[2:0] == 3'b000)) || //beq
+                                  (EX_MEM_ALU_OUT[63] & (EX_MEM_INSTRUCTION_30_14_12[2:0] == 3'b100)) || //blt
+                                  (!EX_MEM_ALU_OUT[63] & (EX_MEM_INSTRUCTION_30_14_12[2:0] == 3'b101)) || //bge
+                                  ((!EX_MEM_zero) & (EX_MEM_INSTRUCTION_30_14_12[2:0] == 3'b001)) //bne
+                                )) || EX_MEM_OPCODE == 7'b1101111; //jump
 
 // always@(*) begin
 //     $display("Time: %0t, EX_MEM_ALU_OUT[63]: %b, EX_MEM_Branch: %b, Flush: %b", $time, EX_MEM_ALU_OUT[63], EX_MEM_Branch, Flush);
