@@ -8,7 +8,7 @@ module PC_block(
 
 always @(posedge clk) begin
     if (rst) begin
-        PC <= 64'd0;
+        PC <= -64'd4;
     end else if(stall) begin
         PC <= PC;
     end else begin
