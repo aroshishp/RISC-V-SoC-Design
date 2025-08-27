@@ -15,7 +15,11 @@ always @(posedge clk) begin
         PC <= PC_NEXT;
     end
 
-    $display("PC: %d, PC_NEXT: %d", PC, PC_NEXT);
+    // $display("PC: %d, PC_NEXT: %d", PC, PC_NEXT);
+end
+
+always@(*) begin
+    $display("time: %0t, PC: %d, PC_NEXT: %d",$time, PC, PC_NEXT);
 end
 
 

@@ -15,4 +15,7 @@ assign Forward_A = (EX_MEM_RegWrite && (EX_MEM_RD != 5'b0) && (EX_MEM_RD == ID_E
 assign Forward_B = (EX_MEM_RegWrite && (EX_MEM_RD != 5'b0) && (EX_MEM_RD == ID_EX_RS2)) && (!(EX_MEM_RegWrite && (EX_MEM_RD != 5'b0) && (EX_MEM_RD == ID_EX_RS1))) ? 2'b10 :
                     (MEM_WB_RegWrite && (MEM_WB_RD != 5'b0) && (MEM_WB_RD == ID_EX_RS2)) && (!(MEM_WB_RegWrite && (MEM_WB_RD != 5'b0) && (MEM_WB_RD == ID_EX_RS1))) ? 2'b01 : 2'b00;
 
+// always@(*) begin
+//     $display("Forward_A = %b, Forward_B = %b", Forward_A, Forward_B);
+// end
 endmodule

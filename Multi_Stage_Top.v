@@ -248,7 +248,7 @@ Mux_4_1 ALU_Mux_B(
     .a(ID_EX_READ_DATA2_IMM),
     .b(WRITE_DATA),
     .c(EX_MEM_ALU_OUT),
-    .d(ID_EX_IMM_OUT),
+    .d(ID_EX_READ_DATA2),
     .s(Forward_B),
     .y(ALU_B)
 );
@@ -275,6 +275,7 @@ PC_Adder PC_Adder_Imm(
     .c(PC_NEXT_IMM)
 );
 
+reg [3:0] EX_MEM_INSTRUCTION_30_14_12;
 reg [6:0] EX_MEM_OPCODE;
 reg [4:0] EX_MEM_INSTRUCTION_11_7;
 reg [63:0] EX_MEM_READ_DATA_2;
@@ -288,7 +289,8 @@ reg EX_MEM_MemRead;
 reg EX_MEM_Branch;
 
 always@(posedge clk) begin
-    if (rst) begin
+    if (rst || Flush) begin
+        EX_MEM_INSTRUCTION_30_14_12 <= 4'b0;
         EX_MEM_OPCODE <= 7'b0;
         EX_MEM_INSTRUCTION_11_7 <= 5'b0;
         EX_MEM_READ_DATA_2 <= 64'b0;
@@ -301,6 +303,7 @@ always@(posedge clk) begin
         EX_MEM_MemRead <= 1'b0;
         EX_MEM_Branch <= 1'b0;
     end else begin
+        EX_MEM_INSTRUCTION_30_14_12 <= ID_EX_INSTRUCTION_30_14_12;
         EX_MEM_OPCODE <= ID_EX_INSTRUCTION_OPCODE;
         EX_MEM_INSTRUCTION_11_7 <= ID_EX_INSTRUCTION_11_7;
         EX_MEM_READ_DATA_2 <= ID_EX_READ_DATA2;
@@ -335,8 +338,11 @@ data_memory data_memory(
 
 wire Flush;
 
-assign Flush = (EX_MEM_Branch & EX_MEM_zero) || EX_MEM_OPCODE == 7'b1101111;
+assign Flush = (EX_MEM_Branch & ((EX_MEM_zero & (EX_MEM_INSTRUCTION_30_14_12[2:0] == 3'b000))|| EX_MEM_ALU_OUT[63])) || EX_MEM_OPCODE == 7'b1101111;
 
+// always@(*) begin
+//     $display("Time: %0t, EX_MEM_ALU_OUT[63]: %b, EX_MEM_Branch: %b, Flush: %b", $time, EX_MEM_ALU_OUT[63], EX_MEM_Branch, Flush);
+// end
 
 // MEM/WB Register
 reg [4:0] MEM_WB_INSTRUCTION_11_7;

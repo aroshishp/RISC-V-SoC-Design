@@ -17,5 +17,7 @@ module hazard_detection_unit(
     // end
 
     assign stall = (mem_read_1 && opcode == 7'b0110011 && (rd == rs1 || rd == rs2) && rd != 0) || (mem_read_2 && branch && (rd == rs1 || rd == rs2) && rd != 0) || (mem_read_1 && branch && (rd == rs1 || rd == rs2) && rd != 0);
-
+    // always@(*) begin
+    //     $display("stall = %b", stall);
+    // end
 endmodule

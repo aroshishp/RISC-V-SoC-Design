@@ -16,7 +16,7 @@ assign instruction = (rst == 1'b1) ? 32'h00000000 : IMEM[PC[63:2]];
 
 initial begin
     // Read instructions from imem.txt into IMEM array
-    $readmemh("imem_dump.txt", IMEM);
+    $readmemh("imem_dump.hex", IMEM);
 end
 
 // initial begin
