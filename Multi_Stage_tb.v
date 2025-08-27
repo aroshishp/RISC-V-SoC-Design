@@ -23,7 +23,7 @@ module Single_Stage_tb();
         #500;
 
         rst = 1'b0;
-        #100000;
+        #110000;
         $finish;
     end
 endmodule

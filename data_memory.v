@@ -17,7 +17,7 @@ module data_memory(
 integer fd, i;
 reg [63:0] temp_mem [0:1023];  // temporary buffer for file I/O
 
-assign ReadData = (rst || !MemRead) ? 64'b0 : temp_mem[address];
+assign ReadData = (rst || !MemRead) ? 64'b0 : temp_mem[address >>> 3];
 
 initial begin
     $readmemh("dmem.hex", temp_mem);
@@ -28,7 +28,7 @@ end
 always@(*) begin
     if (MemWrite) begin
         // $display("address: %h, WriteData: %h", address, WriteData);
-        temp_mem[address] = WriteData;
+        temp_mem[address >>> 3] = WriteData;
         
         // Write back the full memory contents to file
         fd = $fopen("dmem.hex", "w");
