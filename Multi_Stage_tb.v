@@ -1,16 +1,16 @@
-module Single_Stage_tb();
+module Multi_Stage_tb();
 
     reg clk = 1'b0;
     reg rst;
 
-    Single_Stage_Top Single_Stage_Top(
+    Memory_Top Memory_Top(
         .clk(clk),
         .rst(rst)
     );
 
     initial begin
         $dumpfile("SS.vcd");
-        $dumpvars(0, Single_Stage_Top);
+        $dumpvars(0, Memory_Top);
     end
 
     always begin
