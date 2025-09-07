@@ -1,4 +1,4 @@
-Register file dump at time 103700:
+Register file dump at time 86500:
 x0:                    x
 x1:                    x
 x2:                    x
@@ -27,7 +27,7 @@ x24:                    x
 x25:                    x
 x26:                    x
 x27:                    x
-x28:                    2
-x29:                    1
+x28:                    4
+x29:                    6
 x30:                    x
 x31:                    x

@@ -8,4 +8,8 @@ module Mux_4_1 (
                (s == 2'b10) ? c :
                (s == 2'b11) ? d : 64'b0;
 
+    // always @(*) begin
+    //     $display("time = %0t, b = %h, ForwardA = %b, y = %h", $time, b, s, y);
+    // end
+
 endmodule

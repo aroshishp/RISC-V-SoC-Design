@@ -131,13 +131,14 @@ Imm_Gen Imm_Gen(
 wire stall;
 
 hazard_detection_unit hazard_detection_unit(
-    .rs1(IF_ID_INSTRUCTION_BUS[19:15]),
-    .rs2(IF_ID_INSTRUCTION_BUS[24:20]),
-    .rd(ID_EX_INSTRUCTION_11_7),
-    .mem_read_1(ID_EX_MemRead),
-    .mem_read_2(EX_MEM_MemRead),
+    .RS1_ENTERING(INSTRUCTION_BUS[19:15]),
+    .RS2_ENTERING(INSTRUCTION_BUS[24:20]),
+    .RD_IF_ID(IF_ID_INSTRUCTION_BUS[11:7]),
+    .RD_ID_EX(ID_EX_INSTRUCTION_11_7),
+    .MemRead_IF_ID(MemRead),
+    .MemRead_ID_EX(ID_EX_MemRead),
     .branch(Branch),
-    .opcode(ID_EX_INSTRUCTION_OPCODE),
+    .opcode_ENTERING(INSTRUCTION_BUS[6:0]),
     .stall(stall)
 );
 
@@ -178,14 +179,14 @@ always@(posedge clk) begin
         ID_EX_MemtoReg <= 1'b0;
         ID_EX_MemRead <= 1'b0;
         ID_EX_Branch <= 1'b0;
-    end else if(stall) begin
-        ID_EX_RegWrite <= 0;
-        ID_EX_ALUSrc <= 0;
-        ID_EX_MemWrite <= 0;
-        ID_EX_ALUOp <= 0;
-        ID_EX_MemtoReg <= 0;
-        ID_EX_MemRead <= 0;
-        ID_EX_Branch <= 0;
+    // end else if(stall) begin
+    //     ID_EX_RegWrite <= 0;
+    //     ID_EX_ALUSrc <= 0;
+    //     ID_EX_MemWrite <= 0;
+    //     ID_EX_ALUOp <= 0;
+    //     ID_EX_MemtoReg <= 0;
+    //     ID_EX_MemRead <= 0;
+    //     ID_EX_Branch <= 0;
     end else begin
         ID_EX_INSTRUCTION_OPCODE <= IF_ID_INSTRUCTION_BUS[6:0];
         ID_EX_INSTRUCTION_11_7 <= IF_ID_INSTRUCTION_BUS[11:7];

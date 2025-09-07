@@ -55,7 +55,7 @@ initial begin
     // registers[7] = 64'd8;
     // registers[13] = 64'd6;
     // registers[12] = 64'd5;
-
+    // registers[15] = 64'd7;
 
     // registers[10] = 64'd1;  
     // registers[11] = 64'd5;
@@ -68,7 +68,9 @@ initial begin
     // registers[31] = 64'd0;  
 
     // registers[6] = 64'd12;
-    // registers[5] = 64'd3;
+    // registers[5] = 64'd0;
+    // registers[28] = 64'd16;
+    // registers[20] = 64'd5;
 
     // registers[20] = 64'd3;
     // registers[21] = 64'd3;
