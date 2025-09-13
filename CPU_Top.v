@@ -56,12 +56,6 @@ PC_Adder PC_Adder_Regular(
 
 wire [31:0] INSTRUCTION_BUS;
 
-// instruction_memory instruction_memory(
-//     .PC(PC_CURR),
-//     .rst(rst),
-//     .instruction(INSTRUCTION_BUS)
-// );
-
 assign IMEM_address = PC_CURR;
 assign INSTRUCTION_BUS = IMEM_instruction;
 
@@ -73,6 +67,9 @@ always@(posedge clk) begin
     if (rst || Flush) begin
         IF_ID_INSTRUCTION_BUS <= 32'b0;
         IF_ID_PC_CURR <= 64'b0;
+    end else if (stall) begin
+        IF_ID_INSTRUCTION_BUS <= IF_ID_INSTRUCTION_BUS;
+        IF_ID_PC_CURR <= IF_ID_PC_CURR;
     end else begin
         IF_ID_INSTRUCTION_BUS <= INSTRUCTION_BUS;
         IF_ID_PC_CURR <= PC_CURR;
@@ -131,16 +128,18 @@ Imm_Gen Imm_Gen(
 wire stall;
 
 hazard_detection_unit hazard_detection_unit(
-    .RS1_ENTERING(INSTRUCTION_BUS[19:15]),
-    .RS2_ENTERING(INSTRUCTION_BUS[24:20]),
-    .RD_IF_ID(IF_ID_INSTRUCTION_BUS[11:7]),
-    .RD_ID_EX(ID_EX_INSTRUCTION_11_7),
-    .MemRead_IF_ID(MemRead),
-    .MemRead_ID_EX(ID_EX_MemRead),
-    .branch(Branch),
-    .opcode_ENTERING(INSTRUCTION_BUS[6:0]),
+    .IF_ID_RS1(IF_ID_INSTRUCTION_BUS[19:15]),
+    .IF_ID_RS2(IF_ID_INSTRUCTION_BUS[24:20]),
+    .ENTERING_RS1(INSTRUCTION_BUS[19:15]),
+    .ENTERING_RS2(INSTRUCTION_BUS[24:20]),
+    .ID_EX_RD(ID_EX_INSTRUCTION_11_7),
+    .ID_EX_MemRead(ID_EX_MemRead),
+    .IF_ID_opcode(IF_ID_INSTRUCTION_BUS[6:0]),
+    .ENTERING_opcode(INSTRUCTION_BUS[6:0]),
+    .IF_ID_branch(Branch),
     .stall(stall)
 );
+
 
 // ID/EX REGISTER
 reg [6:0] ID_EX_INSTRUCTION_OPCODE;
@@ -162,7 +161,7 @@ reg ID_EX_Branch;
 
 
 always@(posedge clk) begin
-    if (rst || Flush) begin
+    if (rst || Flush || stall) begin
         ID_EX_INSTRUCTION_OPCODE <= 7'b0;
         ID_EX_INSTRUCTION_11_7 <= 5'b0;
         ID_EX_INSTRUCTION_30_14_12 <= 4'b0;
@@ -179,14 +178,6 @@ always@(posedge clk) begin
         ID_EX_MemtoReg <= 1'b0;
         ID_EX_MemRead <= 1'b0;
         ID_EX_Branch <= 1'b0;
-    // end else if(stall) begin
-    //     ID_EX_RegWrite <= 0;
-    //     ID_EX_ALUSrc <= 0;
-    //     ID_EX_MemWrite <= 0;
-    //     ID_EX_ALUOp <= 0;
-    //     ID_EX_MemtoReg <= 0;
-    //     ID_EX_MemRead <= 0;
-    //     ID_EX_Branch <= 0;
     end else begin
         ID_EX_INSTRUCTION_OPCODE <= IF_ID_INSTRUCTION_BUS[6:0];
         ID_EX_INSTRUCTION_11_7 <= IF_ID_INSTRUCTION_BUS[11:7];
@@ -234,16 +225,24 @@ wire [63:0] ALU_A;
 
 wire [1:0] Forward_A;
 wire [1:0] Forward_B;
+wire Forward_C;
 
 forwarding_unit forwarding_unit(
     .ID_EX_RS1(ID_EX_INSTRUCTION_19_15),
     .ID_EX_RS2(ID_EX_INSTRUCTION_24_20),
-    .EX_MEM_RD(EX_MEM_INSTRUCTION_11_7),
-    .MEM_WB_RD(MEM_WB_INSTRUCTION_11_7),
+    .EX_MEM_RDes(EX_MEM_INSTRUCTION_11_7),
+    .MEM_WB_RDes(MEM_WB_INSTRUCTION_11_7),
+    .EX_MEM_RS2(EX_MEM_INSTRUCTION_24_20),
+    .INSTR_TYPE(ID_EX_ALUOp),
     .EX_MEM_RegWrite(EX_MEM_RegWrite),
     .MEM_WB_RegWrite(MEM_WB_RegWrite),
+    .EX_MEM_MemWrite(EX_MEM_MemWrite),
+    .MEM_WB_MemRead(MEM_WB_MemRead),
+    .ID_EX_MemWrite(ID_EX_MemWrite),
+    .ID_EX_Branch(ID_EX_Branch),
     .Forward_A(Forward_A),
-    .Forward_B(Forward_B)
+    .Forward_B(Forward_B),
+    .Forward_C(Forward_C)
 );
 
 Mux_4_1 ALU_Mux_A(
@@ -255,11 +254,11 @@ Mux_4_1 ALU_Mux_A(
     .y(ALU_A)
 );
 
-Mux_4_1 ALU_Mux_B(
+Mux_4_1 ALU_Mux_B( //NOT AS PER DIAGRAM, AS PER ALU_A
     .a(ID_EX_READ_DATA2_IMM),
     .b(WRITE_DATA),
     .c(EX_MEM_ALU_OUT),
-    .d(ID_EX_READ_DATA2),
+    .d(64'b0),
     .s(Forward_B),
     .y(ALU_B)
 );
@@ -289,6 +288,7 @@ PC_Adder PC_Adder_Imm(
 reg [3:0] EX_MEM_INSTRUCTION_30_14_12;
 reg [6:0] EX_MEM_OPCODE;
 reg [4:0] EX_MEM_INSTRUCTION_11_7;
+reg [4:0] EX_MEM_INSTRUCTION_24_20;
 reg [63:0] EX_MEM_READ_DATA_2;
 reg [63:0] EX_MEM_ALU_OUT;
 reg EX_MEM_zero;
@@ -304,6 +304,7 @@ always@(posedge clk) begin
         EX_MEM_INSTRUCTION_30_14_12 <= 4'b0;
         EX_MEM_OPCODE <= 7'b0;
         EX_MEM_INSTRUCTION_11_7 <= 5'b0;
+        EX_MEM_INSTRUCTION_24_20 <= 5'b0;
         EX_MEM_READ_DATA_2 <= 64'b0;
         EX_MEM_ALU_OUT <= 64'b0;
         EX_MEM_zero <= 1'b0;
@@ -317,6 +318,7 @@ always@(posedge clk) begin
         EX_MEM_INSTRUCTION_30_14_12 <= ID_EX_INSTRUCTION_30_14_12;
         EX_MEM_OPCODE <= ID_EX_INSTRUCTION_OPCODE;
         EX_MEM_INSTRUCTION_11_7 <= ID_EX_INSTRUCTION_11_7;
+        EX_MEM_INSTRUCTION_24_20 <= ID_EX_INSTRUCTION_24_20;
         EX_MEM_READ_DATA_2 <= ID_EX_READ_DATA2;
         EX_MEM_ALU_OUT <= ALU_OUT;
         EX_MEM_zero <= ALU_ZERO;
@@ -336,21 +338,20 @@ end
 
 wire [63:0] DMEM_READ_DATA;
 
-// data_memory data_memory(
-//     .address(EX_MEM_ALU_OUT),
-//     .WriteData(EX_MEM_READ_DATA_2),
-//     .zero(EX_MEM_zero),
-//     .MemWrite(EX_MEM_MemWrite),
-//     .MemRead(EX_MEM_MemRead),
-//     // .clk(clk),
-//     .rst(rst),
-//     .ReadData(DMEM_READ_DATA)
-// );
-
 assign DMEM_address = EX_MEM_ALU_OUT;
-assign DMEM_WriteData = EX_MEM_READ_DATA_2;
 assign DMEM_MemWrite = EX_MEM_MemWrite;
 assign DMEM_MemRead = EX_MEM_MemRead;
+
+Mux DMEM_WriteData_Mux (
+    .a(EX_MEM_READ_DATA_2),
+    .b(WRITE_DATA),
+    .s(Forward_C),
+    .c(DMEM_WriteData)
+);
+
+// always@(*) begin
+//     $display("time = %t, DMEM_WriteData: %h, DMEM_address: %h, DMEM_MemWrite: %b, DMEM_MemRead: %b", $time, DMEM_WriteData, DMEM_address, DMEM_MemWrite, DMEM_MemRead);
+// end
 
 assign DMEM_READ_DATA = DMEM_ReadData;
 
@@ -363,7 +364,7 @@ assign Flush = (EX_MEM_Branch & ((EX_MEM_zero & (EX_MEM_INSTRUCTION_30_14_12[2:0
                                 )) || EX_MEM_OPCODE == 7'b1101111; //jump
 
 // always@(*) begin
-//     $display("Time: %0t, EX_MEM_ALU_OUT[63]: %b, EX_MEM_Branch: %b, Flush: %b", $time, EX_MEM_ALU_OUT[63], EX_MEM_Branch, Flush);
+//     $display("Time: %0t, ALU_OUT: %h, EX_MEM_ALU_OUT[63]: %b, EX_MEM_Branch: %b, Flush: %b", $time, ALU_OUT,EX_MEM_ALU_OUT[63], EX_MEM_Branch, Flush);
 // end
 
 // MEM/WB Register
@@ -372,11 +373,7 @@ reg [63:0] MEM_WB_ALU_OUT;
 reg [63:0] MEM_WB_DMEM_READ_DATA;
 reg MEM_WB_RegWrite;
 reg MEM_WB_MemtoReg;
-
-// initial begin
-//     // $monitor("ALU_OUT: %h", MEM_WB_ALU_OUT);
-//     // $monitor("DMEM_READ_DATA: %h", MEM_WB_DMEM_READ_DATA);
-// end
+reg MEM_WB_MemRead;
 
 always@(posedge clk) begin
     if (rst) begin
@@ -384,12 +381,14 @@ always@(posedge clk) begin
         MEM_WB_ALU_OUT <= 64'b0;
         MEM_WB_DMEM_READ_DATA <= 64'b0;
         MEM_WB_RegWrite <= 1'b0;
+        MEM_WB_MemRead <= 1'b0;
         MEM_WB_MemtoReg <= 1'b0;
     end else begin
         MEM_WB_INSTRUCTION_11_7 <= EX_MEM_INSTRUCTION_11_7;
         MEM_WB_ALU_OUT <= EX_MEM_ALU_OUT;
         MEM_WB_DMEM_READ_DATA <= DMEM_READ_DATA;
         MEM_WB_RegWrite <= EX_MEM_RegWrite;
+        MEM_WB_MemRead <= EX_MEM_MemRead;
         MEM_WB_MemtoReg <= EX_MEM_MemtoReg;
     end
 end

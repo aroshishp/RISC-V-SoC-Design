@@ -31,12 +31,12 @@ u type ->
 // end
 
 assign ALUOp =  (opcode == 7'b0110011) ? 3'b000 : //R
-                (opcode == 7'b0010011) ? 3'b001 : //I
+                (opcode == 7'b0010011 || opcode == 7'b1100111) ? 3'b001 : //I, jalr
                 (opcode == 7'b0000011) ? 3'b010 : //ld
                 (opcode == 7'b0100011) ? 3'b011 : //sd
                 (opcode == 7'b1100011) ? 3'b100 : //branch
                 (opcode == 7'b1101111) ? 3'b101 : //jump
-                (opcode == 7'b0110111) ? 3'b110 : //lui, auipc
+                (opcode == 7'b0110111) ? 3'b110 : //lui, auipc (U Type)
                 (opcode == 7'b1110011) ? 3'b111 : 3'bxxx; //ecall, ebreak
 
 assign Imm_Src = (opcode == 7'b0010011 || opcode == 7'b0000011) ? 2'b00 : // I
@@ -47,7 +47,7 @@ assign Imm_Src = (opcode == 7'b0010011 || opcode == 7'b0000011) ? 2'b00 : // I
 
 assign MemWrite = (opcode == 7'b0100011) ? 1'b1 : 1'b0; //S
 assign ALUSrc = (opcode == 7'b0010011 || opcode == 7'b0000011 || opcode == 7'b0100011) ? 1'b1 : 1'b0; //I, Load, S
-assign RegWrite = (opcode == 7'b0100011 || opcode == 7'b1100011 || opcode == 7'b1110011) ? 1'b0 : 1'b1; //S, B, EType
+assign RegWrite = (opcode == 7'b0100011 || opcode == 7'b1100011 || opcode == 7'b1110011) ? 1'b0 : 1'b1; //not for S, B, EType
 
 // always@(*) begin
 //     $display("ALUOp: %b", ALUOp);
@@ -57,5 +57,8 @@ assign RegWrite = (opcode == 7'b0100011 || opcode == 7'b1100011 || opcode == 7'b
 // end
 // always@(*) begin
 //     $display("Time: %0t | opcode: %b | ALUOp: %b", $time, opcode, ALUOp);
+// end
+// always@(*) begin
+//     $display("time = %0t, MemRead = %b, MemWrite = %b", $time, MemRead, MemWrite);
 // end
 endmodule

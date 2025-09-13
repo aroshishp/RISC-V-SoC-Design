@@ -31,4 +31,9 @@ module data_memory(
             end
         end
     end
+
+    // always@(*) begin
+    //     $display("time = %0t, MemRead = %b, MemWrite = %b, Address = %h, WriteData = %h, ReadData = %h", $time, MemRead, MemWrite, address, WriteData, ReadData);
+    // end
+        
 endmodule

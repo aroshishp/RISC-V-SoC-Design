@@ -23,7 +23,8 @@ module Multi_Stage_tb();
         #500;
 
         rst = 1'b0;
-        #110000;
+        #210000;
+        //  #2500
         $finish;
     end
 endmodule
