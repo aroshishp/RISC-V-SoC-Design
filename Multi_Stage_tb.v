@@ -3,14 +3,14 @@ module Multi_Stage_tb();
     reg clk = 1'b0;
     reg rst;
 
-    Memory_Top Memory_Top(
+    Bus_Top Bus_Top(
         .clk(clk),
         .rst(rst)
     );
 
     initial begin
         $dumpfile("SS.vcd");
-        $dumpvars(0, Memory_Top);
+        $dumpvars(0, Bus_Top);
     end
 
     always begin

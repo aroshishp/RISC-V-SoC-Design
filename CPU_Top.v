@@ -367,6 +367,8 @@ assign Flush = (EX_MEM_Branch & ((EX_MEM_zero & (EX_MEM_INSTRUCTION_30_14_12[2:0
 //     $display("Time: %0t, ALU_OUT: %h, EX_MEM_ALU_OUT[63]: %b, EX_MEM_Branch: %b, Flush: %b", $time, ALU_OUT,EX_MEM_ALU_OUT[63], EX_MEM_Branch, Flush);
 // end
 
+// -------- Fifth Stage --------
+
 // MEM/WB Register
 reg [4:0] MEM_WB_INSTRUCTION_11_7;
 reg [63:0] MEM_WB_ALU_OUT;
